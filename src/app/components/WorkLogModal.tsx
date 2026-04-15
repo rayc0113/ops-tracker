@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Upload, Save, MoreVertical, Settings, Trash2, Edit2, FileText } from 'lucide-react';
+import SearchableSelect from './ui/SearchableSelect';
 
 const CURRENT_USER = '黃麗婷';
 
@@ -11,10 +12,26 @@ const MOCK_FILES = [
   { id: '3', name: '處理紀錄_20260415.xlsx' },
 ];
 
+interface WorkLog {
+  id: string;
+  category: string;
+  system: string;
+  company: string;
+  group: string;
+  client: string;
+  department: string;
+  subject: string;
+  handledDate: string;
+  handler: string;
+  createdDate: string;
+}
+
 interface WorkLogModalProps {
   isOpen: boolean;
   onClose: () => void;
   mode?: 'create' | 'edit';
+  selectedLog?: WorkLog | null;
+  isIncomplete?: boolean;
 }
 
 interface QuickSelectGroup {
@@ -27,8 +44,44 @@ interface QuickSelectGroup {
   projectName: string;
 }
 
-export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkLogModalProps) {
-  const [formData, setFormData] = useState({
+const categoryValueMap: Record<string, string> = {
+  '協助': 'assist',
+  '維護': 'maintain',
+  '開發': 'develop',
+};
+
+const COMPANY_OPTIONS = [
+  '全家便利商店股份有限公司', '中華電信股份有限公司', '勞檢主管機關股份有限公司',
+  '健康診所', '有明紡織股份有限公司', '新聯會新竹分類協會有限公司',
+  '聯和電信股份有限公司', '新光紡織股份有限公司', '總統研究開發股份有限公司',
+  '主要長期有限責任公司', '統華國際商貿股份有限公司', '統盈服飾股份有限公司',
+  '小型電器檢驗有限公司', '中華投資國際股份有限公司', '大美國際國家股份有限公司',
+].map(c => ({ value: c, label: c }));
+
+const CLIENT_OPTIONS = [
+  '王小明', '李佳蓉', '陳志強', '張雅芳', '劉建宏', '吳淑惠',
+  '林雅婷', '黃俊傑', '周美玲', '鄭文博', '蔡欣怡', '謝宗翰',
+  '許雅玲', '楊文宇', '賴俊宇',
+].map(c => ({ value: c, label: c }));
+
+export default function WorkLogModal({ isOpen, onClose, mode = 'create', selectedLog, isIncomplete = false }: WorkLogModalProps) {
+  const initialForm = selectedLog ? {
+    quickSelect: '',
+    company: selectedLog.company,
+    name: selectedLog.client,
+    department: selectedLog.department,
+    group: selectedLog.group,
+    date: selectedLog.handledDate,
+    category: categoryValueMap[selectedLog.category] ?? '',
+    systemName: selectedLog.system,
+    projectName: '專案 A',
+    handler: selectedLog.handler,
+    subject: selectedLog.subject,
+    content: '客戶反映系統操作問題，進行排查與處理。',
+    solution: '確認問題原因，完成修正並通知客戶驗證。',
+    sql: '',
+    hours: '1',
+  } : {
     quickSelect: '',
     company: '',
     name: '',
@@ -44,8 +97,8 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
     solution: '',
     sql: '',
     hours: '0.5',
-  });
-
+  };
+  const [formData, setFormData] = useState(initialForm);
   const [showSaveGroupInput, setShowSaveGroupInput] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [showMoreMenu, setShowMoreMenu] = useState(false);
@@ -56,17 +109,80 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
   ]);
   const [editingGroup, setEditingGroup] = useState<QuickSelectGroup | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<{ id: string; name: string }[]>([]);
+  const [showErrors, setShowErrors] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setFormData(selectedLog ? {
+      quickSelect: '',
+      company: selectedLog.company,
+      name: selectedLog.client,
+      department: selectedLog.department,
+      group: selectedLog.group,
+      date: selectedLog.handledDate,
+      category: categoryValueMap[selectedLog.category] ?? '',
+      systemName: selectedLog.system,
+      projectName: 'project1',
+      handler: selectedLog.handler,
+      subject: selectedLog.subject,
+      content: '客戶反映系統操作問題，進行排查與處理。',
+      solution: '確認問題原因，完成修正並通知客戶驗證。',
+      sql: '',
+      hours: '1',
+    } : {
+      quickSelect: '',
+      company: '',
+      name: '',
+      department: '',
+      group: '',
+      date: new Date().toISOString().split('T')[0],
+      category: '',
+      systemName: 'MS',
+      projectName: '',
+      handler: CURRENT_USER,
+      subject: '',
+      content: '',
+      solution: '',
+      sql: '',
+      hours: '0.5',
+    });
+    setShowErrors(false);
+  }, [selectedLog, isOpen]);
+
+  const REQUIRED_FIELDS = ['company', 'name', 'projectName', 'category', 'subject', 'content'] as const;
+
+  const validate = () => REQUIRED_FIELDS.every(f => !!formData[f]);
+
+  const isError = (field: typeof REQUIRED_FIELDS[number]) => showErrors && !formData[field];
 
   // 公司與對應的集團
   const companyMapping: Record<string, { group: string }> = {
-    'company1': { group: '集團 A' },
-    'company2': { group: '集團 B' },
+    '全家便利商店股份有限公司': { group: '統一集團' },
+    '中華電信股份有限公司': { group: '中華電信集團' },
+    '有明紡織股份有限公司': { group: '遠東集團' },
+    '新聯會新竹分類協會有限公司': { group: '遠東集團' },
+    '統華國際商貿股份有限公司': { group: '統一集團' },
+    '統盈服飾股份有限公司': { group: '統一集團' },
+    '中華投資國際股份有限公司': { group: '中華電信集團' },
   };
 
   // 客戶姓名與對應的部門
   const clientMapping: Record<string, { department: string }> = {
-    'user1': { department: '資訊部' },
-    'user2': { department: '業務部' },
+    '王小明': { department: '中華' },
+    '李佳蓉': { department: '勞務支援' },
+    '陳志強': { department: '中華' },
+    '張雅芳': { department: '中華' },
+    '劉建宏': { department: '紡織' },
+    '吳淑惠': { department: '遠紡' },
+    '林雅婷': { department: '大集團' },
+    '黃俊傑': { department: '紡織' },
+    '周美玲': { department: '研發' },
+    '鄭文博': { department: '三星石化' },
+    '蔡欣怡': { department: '公關' },
+    '謝宗翰': { department: '紡織' },
+    '許雅玲': { department: '電器' },
+    '楊文宇': { department: '國際' },
+    '賴俊宇': { department: '大集團' },
   };
 
   // 專案名稱與對應的處理人員
@@ -151,10 +267,11 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                 <div>
                   <label className="block text-sm mb-1.5 text-[#FF7F29]">快選群組</label>
                   <div className="flex gap-2 relative">
-                    <select
+                    <SearchableSelect
                       value={formData.quickSelect}
-                      onChange={(e) => {
-                        const selectedGroup = quickSelectGroups.find(g => g.id === e.target.value);
+                      options={quickSelectGroups.map(g => ({ value: g.id, label: g.name }))}
+                      onChange={(val) => {
+                        const selectedGroup = quickSelectGroups.find(g => g.id === val);
                         if (selectedGroup) {
                           handleInputChange('company', selectedGroup.company);
                           handleInputChange('name', selectedGroup.clientName);
@@ -162,15 +279,9 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                           handleInputChange('group', selectedGroup.group);
                           handleInputChange('projectName', selectedGroup.projectName);
                         }
-                        handleInputChange('quickSelect', e.target.value);
+                        handleInputChange('quickSelect', val);
                       }}
-                      className="flex-1 px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] focus:outline-none focus:bg-white focus:border focus:border-black"
-                    >
-                      <option value="">請選擇</option>
-                      {quickSelectGroups.map(group => (
-                        <option key={group.id} value={group.id}>{group.name}</option>
-                      ))}
-                    </select>
+                    />
                     <button
                       onClick={() => setShowMoreMenu(!showMoreMenu)}
                       className="px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50 transition-colors"
@@ -231,7 +342,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                           value="MS"
                           checked={formData.systemName === 'MS'}
                           onChange={(e) => handleInputChange('systemName', e.target.value)}
-                          className="mr-2 appearance-none w-4 h-4 border-2 border-black rounded-full checked:border-black checked:bg-black checked:ring-2 checked:ring-white checked:ring-inset"
+                          className="mr-2 appearance-none w-4 h-4 border-2 border-gray-300 rounded-full bg-white checked:border-blue-500 checked:bg-blue-500 checked:ring-2 checked:ring-white checked:ring-inset cursor-pointer"
                         />
                         <span className="text-sm">MS</span>
                       </label>
@@ -242,7 +353,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                           value="ERP"
                           checked={formData.systemName === 'ERP'}
                           onChange={(e) => handleInputChange('systemName', e.target.value)}
-                          className="mr-2 appearance-none w-4 h-4 border-2 border-black rounded-full checked:border-black checked:bg-black checked:ring-2 checked:ring-white checked:ring-inset"
+                          className="mr-2 appearance-none w-4 h-4 border-2 border-gray-300 rounded-full bg-white checked:border-blue-500 checked:bg-blue-500 checked:ring-2 checked:ring-white checked:ring-inset cursor-pointer"
                         />
                         <span className="text-sm">ERP</span>
                       </label>
@@ -287,24 +398,19 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm mb-1.5 text-[#FF7F29]">公司</label>
-                      <select
+                      <label className="block text-sm mb-1.5 text-[#FF7F29]">公司 <span>*</span></label>
+                      <SearchableSelect
                         value={formData.company}
-                        onChange={(e) => {
-                          const companyValue = e.target.value;
-                          handleInputChange('company', companyValue);
-
-                          // 自動帶入集團
-                          if (companyValue && companyMapping[companyValue]) {
-                            handleInputChange('group', companyMapping[companyValue].group);
+                        options={COMPANY_OPTIONS}
+                        onChange={(val) => {
+                          handleInputChange('company', val);
+                          if (val && companyMapping[val]) {
+                            handleInputChange('group', companyMapping[val].group);
                           }
                         }}
-                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
-                      >
-                        <option value="">請選擇</option>
-                        <option value="company1">公司 A</option>
-                        <option value="company2">公司 B</option>
-                      </select>
+                        error={isError('company')}
+                      />
+                      {isError('company') && <p className="text-xs text-red-500 mt-1">必填</p>}
                     </div>
                     <div>
                       <label className="block text-sm mb-1.5 text-[#FF7F29]">集團</label>
@@ -318,24 +424,19 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm mb-1.5 text-[#FF7F29]">客戶姓名</label>
-                      <select
+                      <label className="block text-sm mb-1.5 text-[#FF7F29]">客戶姓名 <span>*</span></label>
+                      <SearchableSelect
                         value={formData.name}
-                        onChange={(e) => {
-                          const nameValue = e.target.value;
-                          handleInputChange('name', nameValue);
-
-                          // 自動帶入部門
-                          if (nameValue && clientMapping[nameValue]) {
-                            handleInputChange('department', clientMapping[nameValue].department);
+                        options={CLIENT_OPTIONS}
+                        onChange={(val) => {
+                          handleInputChange('name', val);
+                          if (val && clientMapping[val]) {
+                            handleInputChange('department', clientMapping[val].department);
                           }
                         }}
-                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
-                      >
-                        <option value="">請選擇</option>
-                        <option value="user1">王小明</option>
-                        <option value="user2">李小華</option>
-                      </select>
+                        error={isError('name')}
+                      />
+                      {isError('name') && <p className="text-xs text-red-500 mt-1">必填</p>}
                     </div>
                     <div>
                       <label className="block text-sm mb-1.5 text-[#FF7F29]">部門</label>
@@ -348,25 +449,19 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm mb-1.5 text-[#FF7F29]">專案名稱</label>
-                    <select
+                    <label className="block text-sm mb-1.5 text-[#FF7F29]">專案名稱 <span>*</span></label>
+                    <SearchableSelect
                       value={formData.projectName}
-                      onChange={(e) => {
-                        const projectValue = e.target.value;
-                        handleInputChange('projectName', projectValue);
-
-                        // 自動帶入處理人員
-                        if (projectValue && projectMapping[projectValue]) {
-                          handleInputChange('handler', projectMapping[projectValue].handler);
+                      options={[{ value: 'project1', label: '專案 A' }, { value: 'project2', label: '專案 B' }, { value: 'project3', label: '專案 C' }]}
+                      onChange={(val) => {
+                        handleInputChange('projectName', val);
+                        if (val && projectMapping[val]) {
+                          handleInputChange('handler', projectMapping[val].handler);
                         }
                       }}
-                      className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
-                    >
-                      <option value="">請選擇</option>
-                      <option value="project1">專案 A</option>
-                      <option value="project2">專案 B</option>
-                      <option value="project3">專案 C</option>
-                    </select>
+                      error={isError('projectName')}
+                    />
+                    {isError('projectName') && <p className="text-xs text-red-500 mt-1">必填</p>}
                   </div>
                 </div>
               </div>
@@ -377,28 +472,22 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm mb-1.5 text-[#3774CE]">處理人員</label>
-                      <select
+                      <SearchableSelect
                         value={formData.handler}
-                        onChange={(e) => handleInputChange('handler', e.target.value)}
-                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] focus:outline-none focus:bg-white focus:border focus:border-black"
-                      >
-                        {HANDLERS.map(name => (
-                          <option key={name} value={name}>{name}</option>
-                        ))}
-                      </select>
+                        options={HANDLERS.map(name => ({ value: name, label: name }))}
+                        onChange={(val) => handleInputChange('handler', val)}
+                      />
                     </div>
                     <div>
-                      <label className="block text-sm mb-1.5 text-[#3774CE]">分類</label>
-                      <select
+                      <label className="block text-sm mb-1.5 text-[#3774CE]">分類 <span>*</span></label>
+                      <SearchableSelect
                         value={formData.category}
-                        onChange={(e) => handleInputChange('category', e.target.value)}
-                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
-                      >
-                        <option value="">請選擇</option>
-                        <option value="assist">協助</option>
-                        <option value="maintain">維護</option>
-                        <option value="develop">開發</option>
-                      </select>
+                        options={[{ value: 'assist', label: '協助' }, { value: 'maintain', label: '維護' }, { value: 'develop', label: '開發' }]}
+                        onChange={(val) => handleInputChange('category', val)}
+                        searchable={false}
+                        error={isError('category')}
+                      />
+                      {isError('category') && <p className="text-xs text-red-500 mt-1">必填</p>}
                     </div>
                   </div>
 
@@ -427,22 +516,24 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
               <div className="mb-4">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm mb-1.5 text-[#3774CE]">維護主旨</label>
+                    <label className="block text-sm mb-1.5 text-[#3774CE]">維護主旨 <span>*</span></label>
                     <input
                       type="text"
                       value={formData.subject}
                       onChange={(e) => handleInputChange('subject', e.target.value)}
-                      className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                      className={`w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black ${isError('subject') ? 'ring-1 ring-red-500' : ''}`}
                     />
+                    {isError('subject') && <p className="text-xs text-red-500 mt-1">必填</p>}
                   </div>
                   <div>
-                    <label className="block text-sm mb-1.5 text-[#3774CE]">維護內容</label>
+                    <label className="block text-sm mb-1.5 text-[#3774CE]">維護內容 <span>*</span></label>
                     <textarea
                       value={formData.content}
                       onChange={(e) => handleInputChange('content', e.target.value)}
                       rows={4}
-                      className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black resize-none"
+                      className={`w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black resize-none ${isError('content') ? 'ring-1 ring-red-500' : ''}`}
                     />
+                    {isError('content') && <p className="text-xs text-red-500 mt-1">必填</p>}
                   </div>
                   <div>
                     <label className="block text-sm mb-1.5 text-[#3774CE]">處理說明</label>
@@ -501,16 +592,56 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
 
         {/* Footer */}
         <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 flex-shrink-0">
-          <button
-            onClick={() => {
-              // Handle save
-              console.log('Saving:', formData);
-              onClose();
-            }}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-          >
-            儲存
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                if (!validate()) { setShowErrors(true); return; }
+                console.log('Saving:', formData);
+                onClose();
+              }}
+              className="px-6 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-sm"
+            >
+              儲存
+            </button>
+            {(mode === 'edit' || isIncomplete) && (
+              <button
+                onClick={onClose}
+                className="px-6 py-2 border border-gray-300 text-gray-500 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+              >
+                取消
+              </button>
+            )}
+            {mode === 'create' && (
+              <button
+                onClick={() => {
+                  if (!validate()) { setShowErrors(true); return; }
+                  console.log('Saving and continuing:', formData);
+                  setFormData({
+                    quickSelect: '',
+                    company: '',
+                    name: '',
+                    department: '',
+                    group: '',
+                    date: new Date().toISOString().split('T')[0],
+                    category: '',
+                    systemName: 'MS',
+                    projectName: '',
+                    handler: CURRENT_USER,
+                    subject: '',
+                    content: '',
+                    solution: '',
+                    sql: '',
+                    hours: '0.5',
+                  });
+                  setUploadedFiles([]);
+                  setShowErrors(false);
+                }}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              >
+                儲存並繼續
+              </button>
+            )}
+          </div>
           {false && (
             <button
               onClick={() => {

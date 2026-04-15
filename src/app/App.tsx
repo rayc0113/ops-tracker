@@ -14,6 +14,7 @@ interface WorkLog {
   handledDate: string;
   handler: string;
   createdDate: string;
+  incomplete?: boolean;
 }
 
 const mockData: WorkLog[] = [
@@ -58,16 +59,17 @@ const mockData: WorkLog[] = [
   },
   {
     id: 'CH00005',
-    category: '維護',
+    category: '',
     system: 'MS',
     company: '健康診所',
     group: '醫療體系',
     client: '張雅芳',
     department: '中華',
-    subject: '薪資計算公式調整',
+    subject: '',
     handledDate: '2025-10-15',
     handler: '林小華',
     createdDate: '2025-10-15',
+    incomplete: true,
   },
   {
     id: 'CH00006',
@@ -218,6 +220,7 @@ export default function App() {
   const [activeNav, setActiveNav] = useState('工作日誌');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const [selectedLog, setSelectedLog] = useState<WorkLog | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('全部分類');
   const [systemFilter, setSystemFilter] = useState('全部系統');
@@ -432,8 +435,8 @@ export default function App() {
                 {filteredData.map((log, index) => (
                   <tr
                     key={log.id}
-                    onClick={() => { setModalMode('edit'); setIsModalOpen(true); }}
-                    className="h-[40px] bg-white hover:bg-blue-50 transition-colors cursor-pointer"
+                    onClick={() => { setModalMode('edit'); setSelectedLog(log); setIsModalOpen(true); }}
+                    className={`h-[40px] transition-colors cursor-pointer ${log.incomplete ? 'bg-red-50 hover:bg-red-100' : 'bg-white hover:bg-blue-50'}`}
                   >
                     <td className="px-2 py-3 text-[14px] text-[#106fff]">{log.id}</td>
                     <td className="px-2 py-3 text-[14px] text-[#2d336b]">{log.category}</td>
@@ -482,7 +485,7 @@ export default function App() {
       </div>
 
       {/* Modal */}
-      <WorkLogModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} mode={modalMode} />
+      <WorkLogModal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setSelectedLog(null); }} mode={modalMode} selectedLog={selectedLog} isIncomplete={!!selectedLog?.incomplete} />
     </div>
   );
 }
