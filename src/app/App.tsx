@@ -225,7 +225,7 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('全部分類');
   const [systemFilter, setSystemFilter] = useState('全部系統');
-  const [handlerFilter, setHandlerFilter] = useState('全部人員');
+  const [handlerFilter, setHandlerFilter] = useState('黃麗婷');
   const defaultStart = (() => {
     const d = new Date();
     d.setMonth(d.getMonth() - 6);
