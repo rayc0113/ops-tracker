@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Search, User } from 'lucide-react';
 import WorkLogModal from './components/WorkLogModal';
+import SearchableSelect from './components/ui/SearchableSelect';
 
 interface WorkLog {
   id: string;
@@ -341,36 +342,44 @@ export default function App() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8F9BC8]" size={16} />
             </div>
 
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] focus:outline-none focus:bg-white focus:border focus:border-black"
-            >
-              <option>全部分類</option>
-              <option>維護</option>
-              <option>協助</option>
-              <option>開發</option>
-            </select>
+            <div className="w-32">
+              <SearchableSelect
+                value={categoryFilter}
+                options={[
+                  { value: '全部分類', label: '全部分類' },
+                  { value: '維護', label: '維護' },
+                  { value: '協助', label: '協助' },
+                  { value: '開發', label: '開發' },
+                ]}
+                onChange={setCategoryFilter}
+                searchable={false}
+              />
+            </div>
 
-            <select
-              value={systemFilter}
-              onChange={(e) => setSystemFilter(e.target.value)}
-              className="px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] focus:outline-none focus:bg-white focus:border focus:border-black"
-            >
-              <option>全部系統</option>
-              <option>MS</option>
-              <option>ERP</option>
-            </select>
+            <div className="w-32">
+              <SearchableSelect
+                value={systemFilter}
+                options={[
+                  { value: '全部系統', label: '全部系統' },
+                  { value: 'MS', label: 'MS' },
+                  { value: 'ERP', label: 'ERP' },
+                ]}
+                onChange={setSystemFilter}
+                searchable={false}
+              />
+            </div>
 
-            <select
-              value={handlerFilter}
-              onChange={(e) => setHandlerFilter(e.target.value)}
-              className="px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] focus:outline-none focus:bg-white focus:border focus:border-black"
-            >
-              <option>全部人員</option>
-              <option>黃麗婷</option>
-              <option>林小華</option>
-            </select>
+            <div className="w-36">
+              <SearchableSelect
+                value={handlerFilter}
+                options={[
+                  { value: '全部人員', label: '全部人員' },
+                  { value: '黃麗婷', label: '黃麗婷' },
+                  { value: '林小華', label: '林小華' },
+                ]}
+                onChange={setHandlerFilter}
+              />
+            </div>
 
             <div className="flex items-center gap-2">
               <input
