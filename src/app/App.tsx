@@ -257,46 +257,27 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation Bar */}
-      <nav className="bg-white px-6 py-3 shadow-[0px_4px_4px_0px_rgba(60,60,85,0.05)]">
-        <div className="flex items-center justify-between">
+      <nav className="bg-white px-6 shadow-[0px_4px_4px_0px_rgba(60,60,85,0.05)]">
+        <div className="flex items-stretch justify-between h-14">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
               <img src="/images/icon-ds-logo.svg" alt="logo" className="w-8 h-8" />
               <span className="text-[18px] text-[#222962]">客戶維運管理</span>
             </div>
-            <div className="flex gap-6">
-              <button
-                onClick={() => setActiveNav('待辦')}
-                className={`text-sm font-semibold ${
-                  activeNav === '待辦' ? 'text-blue-600' : 'text-[#b1b7e6] hover:text-[#8f9bc8]'
-                }`}
-              >
-                待辦
-              </button>
-              <button
-                onClick={() => setActiveNav('我的表單')}
-                className={`text-sm font-semibold ${
-                  activeNav === '我的表單' ? 'text-blue-600' : 'text-[#b1b7e6] hover:text-[#8f9bc8]'
-                }`}
-              >
-                我的表單
-              </button>
-              <button
-                onClick={() => setActiveNav('表單追蹤')}
-                className={`text-sm font-semibold ${
-                  activeNav === '表單追蹤' ? 'text-blue-600' : 'text-[#b1b7e6] hover:text-[#8f9bc8]'
-                }`}
-              >
-                表單追蹤
-              </button>
-              <button
-                onClick={() => setActiveNav('工作日誌')}
-                className={`text-sm font-semibold ${
-                  activeNav === '工作日誌' ? 'text-blue-600' : 'text-[#b1b7e6] hover:text-[#8f9bc8]'
-                }`}
-              >
-                工作日誌
-              </button>
+            <div className="flex gap-6 h-full">
+              {['待辦', '我的表單', '表單追蹤', '工作日誌'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveNav(tab)}
+                  className={`text-sm font-semibold border-b-2 transition-colors ${
+                    activeNav === tab
+                      ? 'text-blue-600 border-blue-600'
+                      : 'text-[#b1b7e6] border-transparent hover:text-[#8f9bc8]'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
             </div>
           </div>
           <div className="flex items-center gap-3">
