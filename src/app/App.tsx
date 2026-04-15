@@ -256,7 +256,7 @@ export default function App() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
-              <img src="/images/icon-ds logo.svg" alt="logo" className="w-8 h-8" />
+              <img src="/images/icon-ds-logo.svg" alt="logo" className="w-8 h-8" />
               <span className="text-[18px] text-[#222962]">客戶維運管理</span>
             </div>
             <div className="flex gap-6">
