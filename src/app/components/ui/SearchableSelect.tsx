@@ -42,7 +42,7 @@ export default function SearchableSelect({ options, value, onChange, placeholder
       <button
         type="button"
         onClick={() => { setOpen(o => !o); setSearch(''); }}
-        className={`w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-left flex items-center justify-between focus:outline-none focus:bg-white focus:border focus:border-black ${error ? 'ring-1 ring-red-500' : ''}`}
+        className={`w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-left flex items-center justify-between border border-transparent focus:outline-none focus:bg-white focus:border-black ${error ? 'ring-1 ring-red-500' : ''}`}
       >
         <span className={`truncate ${selected ? 'text-[#2D336B]' : 'text-[#8F9BC8]'}`}>
           {selected ? selected.label : placeholder}

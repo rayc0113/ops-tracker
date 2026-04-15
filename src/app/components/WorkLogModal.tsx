@@ -328,7 +328,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                       type="date"
                       value={formData.date}
                       onChange={(e) => handleInputChange('date', e.target.value)}
-                      className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                      className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                       style={{ colorScheme: 'light' }}
                     />
                   </div>
@@ -373,7 +373,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                         value={newGroupName}
                         onChange={(e) => setNewGroupName(e.target.value)}
                         placeholder="輸入群組名稱"
-                        className="flex-1 px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                        className="flex-1 px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black"
                       />
                       <button
                         onClick={handleSaveAsGroup}
@@ -418,7 +418,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                         type="text"
                         value={formData.group}
                         onChange={(e) => handleInputChange('group', e.target.value)}
-                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black"
                       />
                     </div>
                   </div>
@@ -444,7 +444,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                         type="text"
                         value={formData.department}
                         onChange={(e) => handleInputChange('department', e.target.value)}
-                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black"
                       />
                     </div>
                   </div>
@@ -500,7 +500,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                         min="0"
                         value={formData.hours}
                         onChange={(e) => handleInputChange('hours', e.target.value)}
-                        className="w-32 px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                        className="w-32 px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black"
                       />
                       <span className="text-sm text-gray-600">小時</span>
                     </div>
@@ -521,7 +521,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                       type="text"
                       value={formData.subject}
                       onChange={(e) => handleInputChange('subject', e.target.value)}
-                      className={`w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black ${isError('subject') ? 'ring-1 ring-red-500' : ''}`}
+                      className={`w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black ${isError('subject') ? 'ring-1 ring-red-500' : ''}`}
                     />
                     {isError('subject') && <p className="text-xs text-red-500 mt-1">必填</p>}
                   </div>
@@ -531,7 +531,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                       value={formData.content}
                       onChange={(e) => handleInputChange('content', e.target.value)}
                       rows={4}
-                      className={`w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black resize-none ${isError('content') ? 'ring-1 ring-red-500' : ''}`}
+                      className={`w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black resize-none ${isError('content') ? 'ring-1 ring-red-500' : ''}`}
                     />
                     {isError('content') && <p className="text-xs text-red-500 mt-1">必填</p>}
                   </div>
@@ -541,7 +541,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                       value={formData.solution}
                       onChange={(e) => handleInputChange('solution', e.target.value)}
                       rows={4}
-                      className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black resize-none"
+                      className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black resize-none"
                     />
                   </div>
                   <div>
@@ -551,7 +551,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                       onChange={(e) => handleInputChange('sql', e.target.value)}
                       placeholder="選填"
                       rows={3}
-                      className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black resize-none font-mono"
+                      className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black resize-none font-mono"
                     />
                   </div>
                 </div>
@@ -682,7 +682,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                               type="text"
                               value={editingGroup.name}
                               onChange={(e) => setEditingGroup({ ...editingGroup, name: e.target.value })}
-                              className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                              className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black"
                             />
                           </div>
                           <div className="grid grid-cols-2 gap-3">
@@ -692,7 +692,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                                 type="text"
                                 value={editingGroup.company}
                                 onChange={(e) => setEditingGroup({ ...editingGroup, company: e.target.value })}
-                                className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                                className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black"
                               />
                             </div>
                             <div>
@@ -701,7 +701,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                                 type="text"
                                 value={editingGroup.clientName}
                                 onChange={(e) => setEditingGroup({ ...editingGroup, clientName: e.target.value })}
-                                className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                                className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black"
                               />
                             </div>
                           </div>
@@ -712,7 +712,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                                 type="text"
                                 value={editingGroup.department}
                                 onChange={(e) => setEditingGroup({ ...editingGroup, department: e.target.value })}
-                                className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                                className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black"
                               />
                             </div>
                             <div>
@@ -721,7 +721,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                                 type="text"
                                 value={editingGroup.group}
                                 onChange={(e) => setEditingGroup({ ...editingGroup, group: e.target.value })}
-                                className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                                className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black"
                               />
                             </div>
                           </div>
@@ -731,7 +731,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
                               type="text"
                               value={editingGroup.projectName}
                               onChange={(e) => setEditingGroup({ ...editingGroup, projectName: e.target.value })}
-                              className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                              className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none border border-transparent focus:bg-white focus:border-black"
                             />
                           </div>
                           <div className="flex gap-2 justify-end">
