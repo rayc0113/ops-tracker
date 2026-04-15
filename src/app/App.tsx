@@ -219,6 +219,7 @@ const mockData: WorkLog[] = [
 
 export default function App() {
   const [activeNav, setActiveNav] = useState('工作日誌');
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedLog, setSelectedLog] = useState<WorkLog | null>(null);
@@ -310,8 +311,24 @@ export default function App() {
             <button className="px-5 py-2 bg-blue-600 text-white rounded-[33px] text-sm font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap">
               + 申請單
             </button>
-            <div className="w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center">
-              <User size={18} className="text-white" />
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(v => !v)}
+                className="w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center hover:opacity-90 transition-opacity"
+              >
+                <User size={18} className="text-white" />
+              </button>
+              {showUserMenu && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
+                  <div className="absolute right-0 top-full mt-2 w-44 bg-white rounded-xl shadow-lg border border-gray-100 z-50 py-2">
+                    <div className="px-4 py-2 text-sm text-[#2D336B] font-medium">黃麗婷</div>
+                    <div className="border-t border-gray-100 my-1" />
+                    <button className="w-full px-4 py-2 text-sm text-left text-[#2D336B] hover:bg-[#EFF0F8] transition-colors">設定</button>
+                    <button className="w-full px-4 py-2 text-sm text-left text-[#2D336B] hover:bg-[#EFF0F8] transition-colors">登出</button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
