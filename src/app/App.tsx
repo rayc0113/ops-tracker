@@ -217,11 +217,12 @@ const mockData: WorkLog[] = [
 export default function App() {
   const [activeNav, setActiveNav] = useState('工作日誌');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('全部分類');
   const [systemFilter, setSystemFilter] = useState('全部系統');
   const [handlerFilter, setHandlerFilter] = useState('全部人員');
-  const [dateRangeFilter, setDateRangeFilter] = useState('過去 1 個月');
+  const [dateRangeFilter, setDateRangeFilter] = useState('過去 6 個月');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
@@ -279,9 +280,7 @@ export default function App() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
-                <span className="text-white text-sm">📋</span>
-              </div>
+              <img src="/images/icon-ds logo.svg" alt="logo" className="w-8 h-8" />
               <span className="text-[18px] text-[#222962]">客戶維運管理</span>
             </div>
             <div className="flex gap-6">
@@ -346,7 +345,7 @@ export default function App() {
             <h1 className="text-[20px] font-semibold text-[#2d336b] whitespace-nowrap px-2">工作日誌</h1>
 
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => { setModalMode('create'); setIsModalOpen(true); }}
               className="px-5 py-2 bg-blue-600 text-white rounded-[33px] text-sm font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap"
             >
               + 新增日誌
@@ -475,10 +474,8 @@ export default function App() {
                 {filteredData.map((log, index) => (
                   <tr
                     key={log.id}
-                    onClick={() => setIsModalOpen(true)}
-                    className={`${
-                      index % 2 === 0 ? 'bg-white' : 'bg-[#f7f8fe]'
-                    } h-[40px] hover:bg-blue-50 transition-colors cursor-pointer`}
+                    onClick={() => { setModalMode('edit'); setIsModalOpen(true); }}
+                    className="h-[40px] bg-white hover:bg-blue-50 transition-colors cursor-pointer"
                   >
                     <td className="px-2 py-3 text-[14px] text-[#106fff]">{log.id}</td>
                     <td className="px-2 py-3 text-[14px] text-[#2d336b]">{log.category}</td>
@@ -527,7 +524,7 @@ export default function App() {
       </div>
 
       {/* Modal */}
-      <WorkLogModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <WorkLogModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} mode={modalMode} />
     </div>
   );
 }

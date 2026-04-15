@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { X, Upload, Save, MoreVertical, Settings, Trash2, Edit2 } from 'lucide-react';
+import { X, Upload, Save, MoreVertical, Settings, Trash2, Edit2, FileText } from 'lucide-react';
+
+const CURRENT_USER = '黃麗婷';
+
+const HANDLERS = ['黃麗婷', '林小華', '王小明', '陳志強'];
+
+const MOCK_FILES = [
+  { id: '1', name: '客戶需求說明_2026Q1.pdf' },
+  { id: '2', name: '系統截圖_錯誤畫面.png' },
+  { id: '3', name: '處理紀錄_20260415.xlsx' },
+];
 
 interface WorkLogModalProps {
   isOpen: boolean;
@@ -28,7 +38,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
     category: '',
     systemName: 'MS',
     projectName: '',
-    handler: '',
+    handler: CURRENT_USER,
     subject: '',
     content: '',
     solution: '',
@@ -45,6 +55,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
     { id: '2', name: '群組 2', company: '公司 B', clientName: '李小華', department: '業務部', group: '集團 B', projectName: '專案 B' },
   ]);
   const [editingGroup, setEditingGroup] = useState<QuickSelectGroup | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<{ id: string; name: string }[]>([]);
 
   // 公司與對應的集團
   const companyMapping: Record<string, { group: string }> = {
@@ -118,10 +129,10 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl w-[1100px] max-h-[90vh] flex flex-col shadow-2xl">
+      <div className="bg-white rounded-xl w-[1100px] h-[85vh] flex flex-col shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg">新增工作日誌</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
+          <h2 className="text-lg">{mode === 'edit' ? '編輯工作日誌' : '新增工作日誌'}</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -131,10 +142,10 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
         </div>
 
         {/* Body - Scrollable */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="flex">
+        <div className="flex flex-1 min-h-0">
+          <div className="flex w-full min-h-0">
             {/* Left Column */}
-            <div className="w-[40%] px-6 py-5 border-r border-gray-200">
+            <div className="w-[40%] px-6 py-5 border-r border-gray-200 overflow-y-auto">
               {/* Section 1: Quick Select */}
               <div className="mb-4">
                 <div>
@@ -349,12 +360,15 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm mb-1.5 text-[#3774CE]">處理人員</label>
-                      <input
-                        type="text"
+                      <select
                         value={formData.handler}
                         onChange={(e) => handleInputChange('handler', e.target.value)}
-                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
-                      />
+                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] focus:outline-none focus:bg-white focus:border focus:border-black"
+                      >
+                        {HANDLERS.map(name => (
+                          <option key={name} value={name}>{name}</option>
+                        ))}
+                      </select>
                     </div>
                     <div>
                       <label className="block text-sm mb-1.5 text-[#3774CE]">處理工時</label>
@@ -404,7 +418,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
             </div>
 
             {/* Right Column */}
-            <div className="w-[60%] px-6 py-5">
+            <div className="w-[60%] px-6 py-5 overflow-y-auto">
               {/* Section 4: Log Content */}
               <div className="mb-4">
                 <div className="space-y-4">
@@ -452,10 +466,29 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
               <div>
                 <div>
                   <label className="block text-sm mb-1.5 text-[#3774CE]">附件上傳</label>
-                  <button className="px-4 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50 transition-colors flex items-center gap-2">
+                  <button
+                    onClick={() => setUploadedFiles(MOCK_FILES)}
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50 transition-colors flex items-center gap-2"
+                  >
                     <Upload size={16} />
                     上傳附件
                   </button>
+                  {uploadedFiles.length > 0 && (
+                    <div className="mt-2 space-y-1.5">
+                      {uploadedFiles.map(file => (
+                        <div key={file.id} className="flex items-center gap-2 px-3 py-2 bg-[#EFF0F8] rounded-[10px] w-72">
+                          <FileText size={15} className="text-[#3774CE] flex-shrink-0" />
+                          <span className="flex-1 text-sm text-[#2D336B] truncate">{file.name}</span>
+                          <button
+                            onClick={() => setUploadedFiles(prev => prev.filter(f => f.id !== file.id))}
+                            className="text-[#8F9BC8] hover:text-[#2D336B] transition-colors flex-shrink-0"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -463,7 +496,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 flex-shrink-0">
           <button
             onClick={() => {
               // Handle save
@@ -474,7 +507,7 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
           >
             儲存
           </button>
-          {mode === 'edit' && (
+          {false && (
             <button
               onClick={() => {
                 // Handle delete
