@@ -222,44 +222,20 @@ export default function App() {
   const [categoryFilter, setCategoryFilter] = useState('全部分類');
   const [systemFilter, setSystemFilter] = useState('全部系統');
   const [handlerFilter, setHandlerFilter] = useState('全部人員');
-  const [dateRangeFilter, setDateRangeFilter] = useState('過去 6 個月');
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [customStartDate, setCustomStartDate] = useState('');
-  const [customEndDate, setCustomEndDate] = useState('');
+  const defaultStart = (() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - 6);
+    return d.toISOString().split('T')[0];
+  })();
+  const defaultEnd = new Date().toISOString().split('T')[0];
+  const [customStartDate, setCustomStartDate] = useState(defaultStart);
+  const [customEndDate, setCustomEndDate] = useState(defaultEnd);
 
   const getDateRange = () => {
-    const now = new Date();
-    let startDate = new Date();
-
-    switch (dateRangeFilter) {
-      case '過去 2 週':
-        startDate.setDate(now.getDate() - 14);
-        break;
-      case '過去 1 個月':
-        startDate.setMonth(now.getMonth() - 1);
-        break;
-      case '過去 3 個月':
-        startDate.setMonth(now.getMonth() - 3);
-        break;
-      case '過去 6 個月':
-        startDate.setMonth(now.getMonth() - 6);
-        break;
-      case '過去 12 個月':
-        startDate.setMonth(now.getMonth() - 12);
-        break;
-      case '日期範圍':
-        if (customStartDate && customEndDate) {
-          return { start: customStartDate, end: customEndDate };
-        }
-        return null;
-      default:
-        return null;
+    if (customStartDate && customEndDate) {
+      return { start: customStartDate, end: customEndDate };
     }
-
-    return {
-      start: startDate.toISOString().split('T')[0],
-      end: now.toISOString().split('T')[0],
-    };
+    return null;
   };
 
   const filteredData = mockData.filter((log) => {
@@ -351,7 +327,7 @@ export default function App() {
               + 新增日誌
             </button>
 
-            <div className="relative flex-1 max-w-sm">
+            <div className="relative w-64">
               <input
                 type="text"
                 placeholder="搜尋工作日誌、公司、姓名"
@@ -393,43 +369,25 @@ export default function App() {
               <option>林小華</option>
             </select>
 
-            <select
-              value={dateRangeFilter}
-              onChange={(e) => {
-                setDateRangeFilter(e.target.value);
-                setShowDatePicker(e.target.value === '日期範圍');
-              }}
-              className="px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] focus:outline-none focus:bg-white focus:border focus:border-black"
-            >
-              <option>過去 2 週</option>
-              <option>過去 1 個月</option>
-              <option>過去 3 個月</option>
-              <option>過去 6 個月</option>
-              <option>過去 12 個月</option>
-              <option>日期範圍</option>
-            </select>
+            <div className="flex items-center gap-2">
+              <input
+                type="date"
+                value={customStartDate}
+                onChange={(e) => setCustomStartDate(e.target.value)}
+                className="px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] focus:outline-none focus:bg-white focus:border focus:border-black"
+                style={{ colorScheme: 'light' }}
+              />
+              <span className="text-sm text-[#8F9BC8]">～</span>
+              <input
+                type="date"
+                value={customEndDate}
+                onChange={(e) => setCustomEndDate(e.target.value)}
+                className="px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] focus:outline-none focus:bg-white focus:border focus:border-black"
+                style={{ colorScheme: 'light' }}
+              />
+            </div>
 
-            {showDatePicker && (
-              <div className="flex items-center gap-2">
-                <input
-                  type="date"
-                  value={customStartDate}
-                  onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] focus:outline-none focus:bg-white focus:border focus:border-black"
-                  style={{ colorScheme: 'light' }}
-                />
-                <span className="text-sm text-[#8F9BC8]">至</span>
-                <input
-                  type="date"
-                  value={customEndDate}
-                  onChange={(e) => setCustomEndDate(e.target.value)}
-                  className="px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] focus:outline-none focus:bg-white focus:border focus:border-black"
-                  style={{ colorScheme: 'light' }}
-                />
-              </div>
-            )}
-
-            <div className="flex gap-2 ml-auto">
+            <div className="flex gap-2 ml-auto flex-shrink-0">
               <button className="px-4 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2d336b] hover:bg-[#dee1f4] transition-colors">
                 匯入
               </button>

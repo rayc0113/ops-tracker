@@ -333,19 +333,6 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm mb-1.5 text-[#3774CE]">維護分類</label>
-                      <select
-                        value={formData.category}
-                        onChange={(e) => handleInputChange('category', e.target.value)}
-                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
-                      >
-                        <option value="">請選擇</option>
-                        <option value="assist">協助</option>
-                        <option value="maintain">維護</option>
-                        <option value="develop">開發</option>
-                      </select>
-                    </div>
-                    <div>
                       <label className="block text-sm mb-1.5 text-[#3774CE]">處理日期</label>
                       <input
                         type="date"
@@ -354,6 +341,33 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                         className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                         style={{ colorScheme: 'light' }}
                       />
+                    </div>
+                    <div>
+                      <label className="block text-sm mb-1.5 text-[#3774CE]">系統名</label>
+                      <div className="flex gap-4 mt-2">
+                        <label className="flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            name="systemName"
+                            value="MS"
+                            checked={formData.systemName === 'MS'}
+                            onChange={(e) => handleInputChange('systemName', e.target.value)}
+                            className="mr-2 appearance-none w-4 h-4 border-2 border-black rounded-full checked:border-black checked:bg-black checked:ring-2 checked:ring-white checked:ring-inset"
+                          />
+                          <span className="text-sm">MS</span>
+                        </label>
+                        <label className="flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            name="systemName"
+                            value="ERP"
+                            checked={formData.systemName === 'ERP'}
+                            onChange={(e) => handleInputChange('systemName', e.target.value)}
+                            className="mr-2 appearance-none w-4 h-4 border-2 border-black rounded-full checked:border-black checked:bg-black checked:ring-2 checked:ring-white checked:ring-inset"
+                          />
+                          <span className="text-sm">ERP</span>
+                        </label>
+                      </div>
                     </div>
                   </div>
 
@@ -371,48 +385,35 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create' }: WorkL
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm mb-1.5 text-[#3774CE]">處理工時</label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          step="0.5"
-                          min="0"
-                          value={formData.hours}
-                          onChange={(e) => handleInputChange('hours', e.target.value)}
-                          className="w-32 px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
-                        />
-                        <span className="text-sm text-gray-600">小時</span>
-                      </div>
+                      <label className="block text-sm mb-1.5 text-[#3774CE]">分類</label>
+                      <select
+                        value={formData.category}
+                        onChange={(e) => handleInputChange('category', e.target.value)}
+                        className="w-full px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                      >
+                        <option value="">請選擇</option>
+                        <option value="assist">協助</option>
+                        <option value="maintain">維護</option>
+                        <option value="develop">開發</option>
+                      </select>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm mb-1.5 text-[#3774CE]">系統名</label>
-                    <div className="flex gap-4">
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="systemName"
-                          value="MS"
-                          checked={formData.systemName === 'MS'}
-                          onChange={(e) => handleInputChange('systemName', e.target.value)}
-                          className="mr-2 appearance-none w-4 h-4 border-2 border-black rounded-full checked:border-black checked:bg-black checked:ring-2 checked:ring-white checked:ring-inset"
-                        />
-                        <span className="text-sm">MS</span>
-                      </label>
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="systemName"
-                          value="ERP"
-                          checked={formData.systemName === 'ERP'}
-                          onChange={(e) => handleInputChange('systemName', e.target.value)}
-                          className="mr-2 appearance-none w-4 h-4 border-2 border-black rounded-full checked:border-black checked:bg-black checked:ring-2 checked:ring-white checked:ring-inset"
-                        />
-                        <span className="text-sm">ERP</span>
-                      </label>
+                    <label className="block text-sm mb-1.5 text-[#3774CE]">處理工時</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        step="0.5"
+                        min="0"
+                        value={formData.hours}
+                        onChange={(e) => handleInputChange('hours', e.target.value)}
+                        className="w-32 px-3 py-2 bg-[#EFF0F8] rounded-[10px] text-sm text-[#2D336B] placeholder:text-[#8F9BC8] focus:outline-none focus:bg-white focus:border focus:border-black"
+                      />
+                      <span className="text-sm text-gray-600">小時</span>
                     </div>
                   </div>
+
                 </div>
               </div>
             </div>
