@@ -603,14 +603,6 @@ export default function WorkLogModal({ isOpen, onClose, mode = 'create', selecte
             >
               儲存
             </button>
-            {isIncomplete && (
-              <button
-                onClick={onClose}
-                className="px-6 py-2 border border-gray-300 text-gray-500 rounded-lg hover:bg-gray-50 transition-colors text-sm"
-              >
-                取消
-              </button>
-            )}
             {mode === 'create' && (
               <button
                 onClick={() => {
